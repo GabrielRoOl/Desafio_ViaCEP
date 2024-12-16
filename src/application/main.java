@@ -1,51 +1,37 @@
 package application;
 
-import java.io.FileWriter;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Scanner;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import records.REndereco;
+import servic.GeradorDeARquivo;
 
 public class main {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
-        HttpClient client = HttpClient.newHttpClient();
+
+        ConsultaCep consultaCep = new ConsultaCep();
 
         String cep = "";
-
-        while (cep.length() != 8) {
-            System.out.print("CEP: ");
-            cep = sc.nextLine();
-        }
-
         try {
-            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).setPrettyPrinting()
-                    .create();
-            String endereco = "https://viacep.com.br/ws/" + cep + "/json/";
 
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endereco)).build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            while (cep.length() != 8) {
+                System.out.print("\nCEP: ");
+                cep = sc.nextLine();
+            }
 
-            String json = response.body();
+            REndereco novoEndereco = consultaCep.buscaEndereco(cep);
 
-            System.out.println("\n" + json);
+            GeradorDeARquivo gerador = new GeradorDeARquivo();
 
-            FileWriter escritaJson = new FileWriter("copiaCep.json");
-            FileWriter escritaTxt = new FileWriter("copia.txt");
+            gerador.salvarJson(novoEndereco);
 
-            escritaJson.write(gson.toJson(json));
-            escritaTxt.write(gson.toJson(json));
+            System.out.println(novoEndereco);
 
         } catch (Exception e) {
-            e.getMessage();
-        } finally {
-            sc.close();
+            System.err.println("Erro: " + e.getMessage());
         }
-        System.out.println("\n\nPrograma finalizado com sucesso...");
+
+        System.out.println("\nPrograma finalizado com sucesso...");
     }
 }

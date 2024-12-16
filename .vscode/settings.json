@@ -5,5 +5,5 @@
     "lib/**/*.jar",
     "c:\\Temp\\ws-vscode\\gson-2.10.1.jar"
   ],
-  "cSpell.words": ["endereco", "escrita"]
+  "cSpell.words": ["endereco", "escrita", "Gson"]
 }
